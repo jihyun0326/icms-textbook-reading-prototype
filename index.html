@@ -159,9 +159,9 @@
               <label>목차코드<span class="req">*</span></label>
               <div class="toc-input-wrap">
                 <input type="text" id="f-toc" placeholder="목차코드" oninput="hideTocResult()" />
-                <span class="toc-clear" onclick="clearToc()">✕</span>
+                <span class="toc-clear" id="toc-clear" onclick="clearToc()">✕</span>
               </div>
-              <button type="button" class="btn btn-blue-o" onclick="validateToc()">목차 검증</button>
+              <button type="button" class="btn btn-blue-o" id="btn-toc-validate" onclick="validateToc()">목차 검증</button>
             </div>
           </div>
           <div id="toc-result" class="toc-result" style="display:none"></div>
@@ -259,7 +259,7 @@
           <h4>메타 정보</h4>
           <table class="kv">
             <tr><th>URL</th><td colspan="3">
-              <div class="url-line"><span>https://korean-textbook-reading.dev.cats4me.net/?code=KOR20260612091001&amp;type=READING&amp;where=c&amp;user=t</span><button class="mini-btn" onclick="toast('미리보기 — 교과서 읽기 학생 화면이 노출됩니다 (프로토타입)')">미리보기</button></div>
+              <div class="url-line"><span>https://korean-textbook-reading.dev.cats4me.net/?code=KOR20260612091001&amp;type=READING&amp;where=c&amp;user=t</span><button class="mini-btn" onclick="openEdit()">미리보기</button></div>
             </td></tr>
           </table>
         </div>
