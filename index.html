@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ICMS — 교과서 읽기 AI 콘텐츠 등록 (프로토타입)</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 프로토타입 안내 -->
+  <div class="proto-bar">
+    <span class="tag">PROTOTYPE</span>
+    통합콘텐츠 관리자(ICMS) — AI 콘텐츠 자동 생성 등록 · 교과서 읽기
+    <span>· 클릭으로 화면 흐름을 체험할 수 있는 기획 프로토타입입니다 (더미 데이터)</span>
+  </div>
+
+  <!-- GNB -->
+  <header class="gnb">
+    <div class="logo">통합콘텐츠 관리자 <sup>22</sup></div>
+    <nav class="gnb-menu">
+      <a href="#">문제은행</a>
+      <a href="#">문제은행(기출)</a>
+      <a href="#" class="active">CMS</a>
+      <a href="#">LCMS</a>
+      <a href="#">AI 영어</a>
+      <a href="#">디자인관리</a>
+      <a href="#">QR 관리</a>
+      <a href="#">E-BOOK</a>
+    </nav>
+    <div class="gnb-user">박지현 ▾</div>
+  </header>
+
+  <!-- 과목 탭 -->
+  <div class="subject-bar">
+    <div class="tab active">국어</div>
+    <div class="tab">영어</div>
+    <div class="tab">수학</div>
+    <div class="tab">사회</div>
+    <div class="tab">과학</div>
+    <div class="tab">역사</div>
+    <div class="tab">통합교과</div>
+  </div>
+
+  <div class="layout">
+    <!-- 좌측 국어 메뉴 -->
+    <aside class="sidebar">
+      <h3>국어</h3>
+      <ul>
+        <li>개념</li>
+        <li>어휘집</li>
+        <li>속담</li>
+        <li>사자성어</li>
+        <li>관용어</li>
+        <li>지문</li>
+        <li>독해용지문분석</li>
+        <li>문법</li>
+        <li>보강영상</li>
+        <li>국어 통합독해영상</li>
+        <li>문제풀이영상</li>
+        <li>수행평가</li>
+        <li>윙크 콘텐츠</li>
+        <li class="active" onclick="go('list')">교과서 읽기</li>
+      </ul>
+    </aside>
+
+    <main class="main">
+
+      <!-- ============ 목록 ============ -->
+      <section id="view-list" class="view active">
+        <div class="row-between" style="margin-bottom:18px">
+          <div class="breadcrumb" style="margin:0">국어 &gt; 교과서 읽기</div>
+          <button class="btn btn-green" onclick="openRegister()">신규 등록</button>
+        </div>
+
+        <div class="card filter-card">
+          <div class="filter-row">
+            <div class="filter-label">수업과정</div>
+            <select><option>수업과정 전체</option></select>
+            <select><option>학년 전체</option></select>
+            <select><option>학기 전체</option></select>
+          </div>
+          <div class="filter-row">
+            <div class="filter-label">콘텐츠 검색어</div>
+            <div class="seg">
+              <button>코드</button>
+              <button class="active">제목</button>
+              <button>파일</button>
+            </div>
+            <input type="text" class="search-input" placeholder="직접 입력해주세요." />
+          </div>
+        </div>
+        <div class="filter-actions">
+          <button class="btn">초기화</button>
+          <button class="btn btn-blue">조회</button>
+        </div>
+
+        <div class="list-toolbar">
+          <span class="count">총 849개가 조회되었습니다.</span>
+          <span class="spacer"></span>
+          <button class="btn btn-blue" style="padding:7px 12px">엑셀 다운로드</button>
+          <span class="muted">0개 선택</span>
+          <button class="btn" disabled>메타 다운로드</button>
+          <button class="btn" disabled>파일 다운로드</button>
+          <select><option>등록일 최신순</option></select>
+          <select><option>10개씩 보기</option></select>
+        </div>
+
+        <table class="grid">
+          <thead>
+            <tr>
+              <th style="width:34px"><input type="checkbox" /></th>
+              <th>콘텐츠 코드</th><th>제목</th><th>파일명</th>
+              <th>수업과정</th><th>학년</th><th>학기</th>
+              <th>등록일</th><th>노출상태</th><th>삭제</th>
+            </tr>
+          </thead>
+          <tbody id="list-body"><!-- JS --></tbody>
+        </table>
+
+        <div class="pager">
+          <span class="pg">|&lt;</span><span class="pg">&lt;</span>
+          <span class="pg active">1</span><span class="pg">2</span>
+          <span class="pg">3</span><span class="pg">4</span><span class="pg">5</span>
+          <span class="pg">&gt;</span><span class="pg">&gt;|</span>
+        </div>
+      </section>
+
+      <!-- ============ 등록 / 수정 (공용 폼) ============ -->
+      <section id="view-form" class="view">
+        <div class="breadcrumb" id="form-breadcrumb">CMS &gt; 국어 &gt; 교과서 읽기 &gt; 등록</div>
+        <div class="warn-banner">⚠ AI 콘텐츠 생성시 이전에 작성된 내용이 사라지고, 새로운 내용이 덮어씌워집니다.</div>
+
+        <div class="card" style="margin-bottom:18px">
+          <div class="section-title">등록 정보</div>
+          <div class="reg-info">
+            <div class="field-inline">
+              <label>타입<span class="req">*</span></label>
+              <select><option>읽기</option></select>
+            </div>
+            <div class="field-inline">
+              <label>목차코드<span class="req">*</span></label>
+              <input type="text" id="f-toc" placeholder="목차코드" />
+            </div>
+            <div class="field-inline">
+              <label>회차코드<span class="req">*</span></label>
+              <input type="text" id="f-round" placeholder="회차코드" />
+            </div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <!-- AI 입력 -->
+          <div class="card">
+            <div class="section-title">AI 입력</div>
+            <div class="field">
+              <label>교과서 제목<span class="req">*</span></label>
+              <input type="text" id="f-title" placeholder="예) 사랑이 뭔데요" />
+            </div>
+            <div class="field">
+              <label>학년<span class="req">*</span></label>
+              <select id="f-grade">
+                <option>초등학교 5학년</option>
+                <option>초등학교 1학년</option><option>초등학교 2학년</option>
+                <option>초등학교 3학년</option><option>초등학교 4학년</option>
+                <option>초등학교 6학년</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>교과서 본문<span class="req">*</span></label>
+              <textarea id="f-body" rows="12" placeholder="여기에 지문을 붙여넣으세요. 문단을 직접 나누려면 나누고 싶은 곳에 /// 을 넣어주세요." oninput="updateCount()"></textarea>
+              <div class="charcount"><span id="f-count">0</span>자</div>
+              <div class="hint">💡 문단을 직접 나누려면 ///로 구분하세요. 없으면 AI가 자동으로 나눠요.</div>
+            </div>
+            <div class="field" style="margin-bottom:0">
+              <label>퀴즈 갯수<span class="req">*</span></label>
+              <input type="text" id="f-quizcount" value="3" style="width:120px" />
+            </div>
+          </div>
+
+          <!-- AI 출력 -->
+          <div class="card">
+            <div class="section-title">AI 출력</div>
+            <div class="field">
+              <label>인트로<span class="req">*</span></label>
+              <textarea id="f-intro" rows="3" placeholder="글 전체를 흥미롭게 소개하는 인트로"></textarea>
+            </div>
+
+            <div class="subhead">
+              <h4>문단별 요약</h4>
+              <button class="add-btn" onclick="addParagraph()">+ 문단 추가</button>
+            </div>
+            <div id="paragraphs"><!-- JS --></div>
+
+            <div class="subhead">
+              <h4>퀴즈 / 정답</h4>
+              <button class="add-btn" onclick="addQuiz()">+ 퀴즈 추가</button>
+            </div>
+            <div id="quizzes"><!-- JS --></div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-dark" id="btn-cancel" onclick="cancelForm()">취소</button>
+          <button class="btn btn-blue-o" onclick="generateAI()">AI 콘텐츠 자동 생성</button>
+          <button class="btn btn-blue" id="btn-submit" onclick="submitForm()">등록하기</button>
+        </div>
+      </section>
+
+      <!-- ============ 상세 ============ -->
+      <section id="view-detail" class="view">
+        <div class="breadcrumb">CMS &gt; 상세</div>
+
+        <div class="detail-section">
+          <h4>콘텐츠 정보</h4>
+          <table class="kv">
+            <tr><th>콘텐츠 코드</th><td id="d-code">KOR20260612091001</td><th>과목</th><td>국어</td></tr>
+            <tr><th>유형</th><td>교과서 읽기</td><th>수업 콘텐츠 분류</th><td>수업</td></tr>
+            <tr><th>콘텐츠 타입</th><td>READING (읽기)</td><th>영상형태</th><td></td></tr>
+            <tr><th>콘텐츠 구분</th><td>단일</td><th>콘텐츠 형태</th><td>URL</td></tr>
+            <tr><th>제목</th><td id="d-title" colspan="3">「사랑이 뭔데요」</td></tr>
+          </table>
+        </div>
+
+        <div class="detail-section">
+          <h4>목차 정보</h4>
+          <table class="kv">
+            <tr><th>학급/학년/학기</th><td colspan="3">초등 / 5학년 / 1학기</td></tr>
+            <tr><th>목차코드</th><td colspan="3"><span class="code-pill">TCK00000000006540022</span><span class="copy-link" onclick="toast('목차코드가 복사되었습니다.')">목차코드 복사</span></td></tr>
+            <tr><th>연결된 목차</th><td colspan="3">-</td></tr>
+            <tr><th>목차유형</th><td colspan="3">-</td></tr>
+            <tr><th>개정과정</th><td colspan="3">-</td></tr>
+            <tr><th>교재정보</th><td colspan="3">-</td></tr>
+            <tr><th>학습목표</th><td colspan="3">-</td></tr>
+            <tr><th>영상형태</th><td colspan="3"></td></tr>
+            <tr><th>교육과정성취 기준</th><td colspan="3">-</td></tr>
+          </table>
+        </div>
+
+        <div class="detail-section">
+          <h4>메타 정보</h4>
+          <table class="kv">
+            <tr><th>URL</th><td colspan="3">
+              <div class="url-line"><span>https://korean-textbook-reading.dev.cats4me.net/?code=KOR20260612091001&amp;type=READING&amp;where=c&amp;user=t</span><button class="mini-btn" onclick="toast('미리보기 (프로토타입)')">미리보기</button></div>
+              <div class="url-line"><span>https://korean-textbook-reading.dev.cats4me.net/?code=KOR20260612091001&amp;type=READING&amp;where=h&amp;user=s</span><button class="mini-btn" onclick="toast('미리보기 (프로토타입)')">미리보기</button></div>
+            </td></tr>
+          </table>
+        </div>
+
+        <div class="detail-section">
+          <h4>첨부파일 정보</h4>
+          <table class="kv">
+            <tr><th>콘텐츠 원본파일</th><td colspan="3" style="color:var(--gray-400)">첨부된 원본파일이 없습니다.</td></tr>
+            <tr><th>콘텐츠 미리보기</th><td colspan="3"></td></tr>
+          </table>
+        </div>
+
+        <div class="detail-section">
+          <h4>등록 정보</h4>
+          <table class="kv">
+            <tr><th>사용 종료일</th><td>영구</td><th>노출상태</th><td>노출중</td></tr>
+            <tr><th>등록일</th><td>2026-06-12 16:45 / 박지현</td><th>수정일</th><td>-</td></tr>
+          </table>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-dark" onclick="go('list')">목록</button>
+          <button class="btn btn-green" onclick="toast('노출상태가 변경되었습니다.')">노출상태 변경</button>
+          <button class="btn btn-green" onclick="openEdit()">수정</button>
+          <button class="btn btn-red" onclick="toast('삭제되었습니다. (프로토타입)')">삭제</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- 로딩 오버레이 -->
+  <div class="overlay" id="overlay">
+    <div class="loading-pop">
+      <div class="spinner"></div>
+      <div class="t1">처리중입니다...</div>
+      <div class="t2">잠시만 기다려 주십시오.</div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
