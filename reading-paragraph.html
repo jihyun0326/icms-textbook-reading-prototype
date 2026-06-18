@@ -155,7 +155,7 @@ button{font-family:inherit;cursor:pointer}
 
   <!-- 탭 + 진행률 (소개 화면에서는 숨김) -->
   <div class="tabbar" id="tabbar" style="display:none">
-    <button class="tab active" id="tab-read" onclick="gotoStage('read')">📖 문단별 읽기 <span class="badge" id="read-badge">1/5</span></button>
+    <button class="tab active" id="tab-read" onclick="gotoStage('read')">📖 문단별 읽기</button>
     <button class="tab" id="tab-quiz" onclick="gotoStage('quiz')" disabled>✓ 확인 퀴즈</button>
     <button class="tab" id="tab-result" onclick="gotoStage('result')" disabled>🏆 결과</button>
     <div class="progress-wrap"><div class="progress"><i id="progbar"></i></div><span class="progress-pct" id="progpct">0%</span></div>
@@ -371,7 +371,6 @@ function renderPara(){
   document.getElementById("sumText").textContent=p.summary;
   bindVocab();
   maxRead=Math.max(maxRead,cur);
-  document.getElementById("read-badge").textContent=(cur+1)+"/"+PARAS.length;
   document.getElementById("btn-prev").disabled = cur===0;
   const last = cur===PARAS.length-1;
   document.getElementById("btn-next").textContent = last ? "확인 퀴즈 풀기 ›" : "다음 ›";
