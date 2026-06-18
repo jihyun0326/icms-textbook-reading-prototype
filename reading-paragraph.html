@@ -243,8 +243,8 @@ const PARAS = [
     body:"“이까짓 대패질쯤이야!” 장호는 큰소리를 치며 나무를 마구 밀어 댔다. 하지만 <span class='vocab' data-def='서두르다가 도리어 일을 그르침.'>조급함</span> 탓에 나무 면은 울퉁불퉁했고, 각수 어른은 말없이 그 나무를 다시 깎게 했다.",
     summary:"장호는 큰소리치며 서둘러 대패질을 하지만, 조급함 때문에 나무가 고르지 못해 다시 깎게 된다." },
   { title:"봉운이의 부탁",
-    body:"봉운이는 서가에 남아 있는 책들 수를 헤아린 후 작업장으로 갔다. 늦은 시간인데도 각수 어른이 <span class='vocab' data-def='나무판에 글자나 그림을 새기는 일.'>판각</span>을 하느라 여념이 없었다. “저, 어르신, 서포 일 끝나고 난 뒤에 지가 여기 와서 일을 도와드려도 될랑가요?” “서포 일만으로도 힘들 텐데 여기 일까지 괜찮겠냐?” “예, 걱정 없구만요.” 봉운이가 큰 소리로 대답하자 각수 어른이 <span class='vocab' data-def='기꺼이, 기분 좋게 선뜻 받아들이는 모양.'>흔쾌히</span> 허락했다.",
-    summary:"봉운이가 서포 일을 마친 뒤 각수 어른의 작업장 일까지 돕겠다고 부탁하고, 각수 어른이 이를 허락한다." },
+    body:"봉운이는 서가에 남아 있는 책들 수를 헤아린 후 작업장으로 갔다. 늦은 시간인데도 각수 어른이 판각을 하느라 여념이 없었다.<br>“각수 어른, 『조웅전』이랑 『심청전』, 『소대성전』이 몇 권 없구만요. 더 찍어야 헐 것 같어라.”<br>“알었다. 근디 아직까지 집에 안 갔냐? 늦었으니 어서 가거라.”<br>각수 어른의 말에 봉운이가 우물쭈물하며 눈치를 보았다. 각수 어른이 무슨 일이냐는 듯 쳐다보았다.<br>“저, 어르신, 서포 일 끝나고 난 뒤에 지가 여기 와서 일을 도와드려도 될랑가요?”<br>“서포 일만으로도 힘들틴디 여기 일까지 괜찮것냐?”<br>“예, 걱정 없구만요.”<br>봉운이가 큰 소리로 대답하자 각수 어른이 <span class='vocab' data-def='기꺼이, 기분 좋게 선뜻 받아들이는 모양.'>흔쾌히</span> 그러라고 허락을 했다. 봉운이는 기뻐서 팔짝팔짝 뛰었다. 각수 어른이 흐뭇한 표정으로 봉운이를 쳐다보았다.<br>다음 날부터 봉운이는 서포 일이 끝나고 나면 작업장으로 가서 일을 했다. 매일매일 두 군데서 일을 하다 보니 늘 바빠서 시간이 어떻게 가는지 잊을 때가 많았다. 그렇게 두 달이 바람처럼 휙 지나갔다.<br>“그동안 대패질헌 것 좀 보자.”<br>두 달 동안 계속 대패질만 시켰던 각수 어른이 뜬금없이 말했다. 봉운이가 나무 몇 개를 각수 어른 앞으로 가져다 놓았다. 각수 어른이 쓱 둘러보았다. “손 좀 내놔 봐라.” 각수 어른이 봉운이의 손을 잡고 손바닥을 들여다보았다.<br>“손바닥에 굳은살이 박였구나. 재밌드냐?”<br>“예, 나무를 매끈하게 다듬어 놓으면 촉감도 좋고요. 덩달아 지 맴도 다듬어지는 거 같어라.”<br>각수 어른이 미소를 지었다.<br>“인자 책판을 만들어도 되것다.”<br>“참말이당가요?”<br>각수 어른이 손짓을 하자 봉운이가 곁으로 다가갔다.",
+    summary:"봉운이가 서포 일을 마친 뒤 작업장 일까지 돕겠다고 부탁해 허락을 받고, 두 달 동안 성실히 대패질을 한 끝에 각수 어른에게 ‘책판을 만들어도 되겠다’는 인정을 받는다." },
   { title:"글자 새기기",
     body:"두 달이 지나서야 각수 어른은 장호에게 처음으로 글자 새기는 칼을 쥐여 주었다. 반듯하게 다듬은 나무 위에 한 획 한 획 글자를 새기며, 장호는 <span class='vocab' data-def='기초가 되는 바탕.'>밑바탕</span>이 튼튼해야 좋은 글자를 새길 수 있다는 것을 비로소 깨달았다.",
     summary:"마침내 글자 새기는 일을 배운 장호는, 대패질로 다진 밑바탕이 튼튼해야 좋은 글자를 새길 수 있음을 깨닫는다." }
@@ -280,6 +280,7 @@ const RESULT_TIER = {
 const CIRCLE=["①","②","③","④","⑤"];
 let cur=0;                 // 현재 문단 index
 let maxRead=0;             // 읽은 최대 문단 (칩 완료 표시용)
+const summarySeen=new Set(); // 중심 내용을 확인한 문단
 let readDone=false;        // 모든 문단 읽음
 let qIndex=0, qAnswered=[], qCorrect=0;
 
@@ -331,14 +332,17 @@ function renderPara(){
   document.getElementById("r-no").textContent="문단 "+(cur+1);
   document.getElementById("r-body").innerHTML=p.body;
   document.getElementById("sumText").textContent=p.summary;
-  document.getElementById("sumBox").classList.remove("show");
-  document.getElementById("sumToggle").style.display="block";
   bindVocab();
   maxRead=Math.max(maxRead,cur);
   document.getElementById("read-badge").textContent=(cur+1)+"/"+PARAS.length;
   document.getElementById("btn-prev").disabled = cur===0;
   const last = cur===PARAS.length-1;
   document.getElementById("btn-next").textContent = last ? "확인 퀴즈 풀기 ›" : "다음 ›";
+  // 중심 내용 확인 여부에 따라 토글/다음 버튼 상태 결정
+  const seen = summarySeen.has(cur);
+  document.getElementById("sumBox").classList.toggle("show", seen);
+  document.getElementById("sumToggle").style.display = seen ? "none" : "block";
+  document.getElementById("btn-next").disabled = !seen; // 중심 내용 확인 후에만 활성화
   renderChips();
   updateProgress(Math.round((cur+1)/PARAS.length*100));
 }
@@ -348,8 +352,10 @@ function nextPara(){
   else { readDone=true; unlockTab("quiz"); gotoStage("quiz"); }
 }
 function toggleSummary(){
-  document.getElementById("sumBox").classList.toggle("show");
+  summarySeen.add(cur);
+  document.getElementById("sumBox").classList.add("show");
   document.getElementById("sumToggle").style.display="none";
+  document.getElementById("btn-next").disabled=false; // 중심 내용 확인 → 다음 활성화
 }
 function updateProgress(pct){
   document.getElementById("progbar").style.width=pct+"%";
