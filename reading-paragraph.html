@@ -13,16 +13,20 @@
   --amber-soft:#fffbeb; --amber-line:#fde68a;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Pretendard","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);font-size:15px;line-height:1.65}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Pretendard","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);font-size:15px;line-height:1.65;display:flex;flex-direction:column;overflow:hidden}
 button{font-family:inherit;cursor:pointer}
+
+/* 1334×800 디바이스 프레임 (단말기 비율) */
+.frame{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:12px}
 
 /* 프로토타입 바 */
 .proto-bar{background:#11203f;color:#cdddff;font-size:12px;padding:7px 16px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
 .proto-bar .tag{background:var(--blue);color:#fff;border-radius:4px;padding:1px 7px;font-weight:700}
 .proto-bar a{color:#9ec1ff;text-decoration:underline}
 
-/* 앱 컨테이너 */
-.app{max-width:1000px;margin:22px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(20,30,60,.12)}
+/* 앱 컨테이너 — 1334×800 고정 비율 */
+.app{width:1334px;height:800px;flex:none;display:flex;flex-direction:column;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(20,30,60,.12);transform-origin:center center}
 
 /* 상단 바 */
 .topbar{background:var(--blue);color:#fff;display:flex;align-items:center;gap:16px;padding:0 18px;height:54px}
@@ -43,12 +47,12 @@ button{font-family:inherit;cursor:pointer}
 .progress-pct{font-weight:700;color:var(--gray);font-size:13px;min-width:38px;text-align:right}
 
 /* 본문 영역 */
-.stage{padding:22px}
-.view{display:none}
-.view.active{display:block}
+.stage{flex:1;padding:22px;overflow-y:auto;display:flex;flex-direction:column}
+.view{display:none;flex:1;flex-direction:column}
+.view.active{display:flex}
 
 /* 소개 화면 */
-.intro{min-height:440px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#f5f7fb;border-radius:12px;padding:40px 24px}
+.intro{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#f5f7fb;border-radius:12px;padding:40px 24px}
 .intro h1{font-size:30px;color:#b45309;margin-bottom:14px}
 .grade-badge{background:#cfeaf0;color:#0e7490;border-radius:14px;padding:4px 14px;font-size:13px;font-weight:700;margin-bottom:18px}
 .intro p{max-width:620px;color:#475569;margin-bottom:28px}
@@ -118,7 +122,7 @@ button{font-family:inherit;cursor:pointer}
 .quiz-actions{text-align:center;margin-top:22px}
 
 /* 결과 */
-.result{min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#f5f7fb;border-radius:12px;padding:40px 24px}
+.result{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#f5f7fb;border-radius:12px;padding:40px 24px}
 .result .emoji{font-size:56px}
 .result h2{color:var(--blue);font-size:24px;margin-top:8px}
 .result .score{font-size:44px;font-weight:900;margin:6px 0}
@@ -138,6 +142,7 @@ button{font-family:inherit;cursor:pointer}
   <a href="index.html">← 관리자 등록 화면(ICMS)</a>
 </div>
 
+<div class="frame">
 <div class="app">
   <!-- 상단 바 -->
   <div class="topbar">
@@ -213,6 +218,7 @@ button{font-family:inherit;cursor:pointer}
       </div>
     </section>
   </div>
+</div>
 </div>
 
 <div id="tip"></div>
@@ -436,6 +442,16 @@ function applyHash(){
 }
 window.addEventListener("hashchange",applyHash);
 applyHash();
+
+/* ===== 1334×800 프레임을 화면 크기에 맞춰 축소 ===== */
+function fitApp(){
+  const app=document.querySelector(".app");
+  const frame=document.querySelector(".frame");
+  const s=Math.min((frame.clientWidth-4)/1334,(frame.clientHeight-4)/800,1);
+  app.style.transform="scale("+s+")";
+}
+window.addEventListener("resize",fitApp);
+fitApp();
 </script>
 </body>
 </html>
