@@ -7,7 +7,12 @@
 
 ## 🔗 바로 보기 (GitHub Pages)
 
-> 배포 후 이 자리에 공유 링크가 들어갑니다.
+**👉 https://jihyun0326.github.io/icms-textbook-reading-prototype/**
+
+- 목록: [.../#list](https://jihyun0326.github.io/icms-textbook-reading-prototype/#list)
+- 등록(입력 전): [.../#register](https://jihyun0326.github.io/icms-textbook-reading-prototype/#register)
+- 상세: [.../#detail](https://jihyun0326.github.io/icms-textbook-reading-prototype/#detail)
+- 수정(프리필): [.../#edit](https://jihyun0326.github.io/icms-textbook-reading-prototype/#edit)
 
 ## 화면 흐름
 
