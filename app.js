@@ -59,8 +59,8 @@ function openRegister() {
   document.getElementById("f-cgrade").value = "";
   document.getElementById("f-term").value = "";
   document.getElementById("f-toc").value = "";
-  document.getElementById("f-round").value = "";
-  setRegInfoLocked(false); // 등록: 수업과정·회차코드·목차코드·목차검증 입력 가능
+  document.getElementById("f-cms-title").value = "";
+  setRegInfoLocked(false); // 등록: 수업과정·콘텐츠 제목·목차코드·목차검증 입력 가능
   document.getElementById("f-title").value = "";
   document.getElementById("f-grade").value = "초등학교 5학년";
   document.getElementById("f-body").value = "";
@@ -83,8 +83,8 @@ function openEdit() {
   document.getElementById("f-cgrade").value = "5학년";
   document.getElementById("f-term").value = "1학기";
   document.getElementById("f-toc").value = "TCK00000000006540022";
-  document.getElementById("f-round").value = "KOR20260612091001";
-  setRegInfoLocked(true); // 수정: 수업과정·회차코드·목차코드·목차검증 변경 불가
+  document.getElementById("f-cms-title").value = "사랑이 뭔데요";
+  setRegInfoLocked(true); // 수정: 수업과정·목차코드·목차검증 변경 불가
   document.getElementById("f-title").value = "사랑이 뭔데요";
   document.getElementById("f-grade").value = "초등학교 5학년";
   document.getElementById("f-body").value = SAMPLE_BODY;
@@ -98,7 +98,7 @@ function openEdit() {
 
 // ===== 등록 정보 잠금 (수정 화면: 수업과정·회차코드·목차코드·목차검증 변경 불가) =====
 function setRegInfoLocked(locked) {
-  ["f-school", "f-cgrade", "f-term", "f-round", "f-toc"].forEach(id => {
+  ["f-school", "f-cgrade", "f-term", "f-toc"].forEach(id => {
     document.getElementById(id).disabled = locked;
   });
   document.getElementById("btn-toc-validate").disabled = locked;
@@ -273,7 +273,7 @@ function generateAI() {
 function submitForm() {
   const required = [
     ["f-school", "수업과정(학교급)"], ["f-cgrade", "수업과정(학년)"], ["f-term", "수업과정(학기)"],
-    ["f-round", "회차코드"], ["f-toc", "목차코드"],
+    ["f-cms-title", "콘텐츠 제목"], ["f-toc", "목차코드"],
     ["f-title", "교과서 제목"], ["f-body", "교과서 본문"],
     ["f-quizcount", "퀴즈 갯수"], ["f-intro", "인트로"],
   ];
