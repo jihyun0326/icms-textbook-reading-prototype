@@ -134,18 +134,37 @@
           <div class="section-title">등록 정보</div>
           <div class="reg-info">
             <div class="field-inline">
-              <label>타입<span class="req">*</span></label>
-              <select><option>읽기</option></select>
-            </div>
-            <div class="field-inline">
-              <label>목차코드<span class="req">*</span></label>
-              <input type="text" id="f-toc" placeholder="목차코드" />
+              <label>수업과정<span class="req">*</span></label>
+              <select id="f-school">
+                <option value="">학교급</option>
+                <option>초등</option><option>중등</option><option>고등</option><option>공통</option>
+              </select>
+              <select id="f-cgrade">
+                <option value="">학년</option>
+                <option>1학년</option><option>2학년</option><option>3학년</option>
+                <option>4학년</option><option>5학년</option><option>6학년</option>
+              </select>
+              <select id="f-term">
+                <option value="">학기</option>
+                <option>1학기</option><option>2학기</option>
+              </select>
             </div>
             <div class="field-inline">
               <label>회차코드<span class="req">*</span></label>
               <input type="text" id="f-round" placeholder="회차코드" />
             </div>
           </div>
+          <div class="reg-info" style="margin-top:16px">
+            <div class="field-inline" style="flex:1; align-items:center">
+              <label>목차코드<span class="req">*</span></label>
+              <div class="toc-input-wrap">
+                <input type="text" id="f-toc" placeholder="목차코드" oninput="hideTocResult()" />
+                <span class="toc-clear" onclick="clearToc()">✕</span>
+              </div>
+              <button type="button" class="btn btn-blue-o" onclick="validateToc()">목차 검증</button>
+            </div>
+          </div>
+          <div id="toc-result" class="toc-result" style="display:none"></div>
         </div>
 
         <div class="two-col">

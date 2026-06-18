@@ -55,6 +55,9 @@ function openRegister() {
   formMode = "register";
   document.getElementById("form-breadcrumb").innerHTML = "CMS &gt; 국어 &gt; 교과서 읽기 &gt; 등록";
   document.getElementById("btn-submit").textContent = "등록하기";
+  document.getElementById("f-school").value = "";
+  document.getElementById("f-cgrade").value = "";
+  document.getElementById("f-term").value = "";
   document.getElementById("f-toc").value = "";
   document.getElementById("f-toc").disabled = false;
   document.getElementById("f-round").value = "";
@@ -62,11 +65,13 @@ function openRegister() {
   document.getElementById("f-title").value = "";
   document.getElementById("f-grade").value = "초등학교 5학년";
   document.getElementById("f-body").value = "";
-  document.getElementById("f-quizcount").value = "3";
+  document.getElementById("f-quizcount").value = "";
   document.getElementById("f-intro").value = "";
   document.getElementById("paragraphs").innerHTML = "";
   document.getElementById("quizzes").innerHTML = "";
+  hideTocResult();
   updateCount();
+  updateSubmitState();
   go("form");
 }
 
@@ -75,6 +80,9 @@ function openEdit() {
   formMode = "edit";
   document.getElementById("form-breadcrumb").innerHTML = "CMS &gt; 국어 &gt; 교과서 읽기 &gt; 수정";
   document.getElementById("btn-submit").textContent = "수정하기";
+  document.getElementById("f-school").value = "초등";
+  document.getElementById("f-cgrade").value = "5학년";
+  document.getElementById("f-term").value = "1학기";
   document.getElementById("f-toc").value = "TCK00000000006540022";
   document.getElementById("f-toc").disabled = false;
   document.getElementById("f-round").value = "KOR20260612091001";
@@ -83,9 +91,44 @@ function openEdit() {
   document.getElementById("f-grade").value = "초등학교 5학년";
   document.getElementById("f-body").value = SAMPLE_BODY;
   document.getElementById("f-quizcount").value = "3";
+  hideTocResult();
   fillOutput();
   updateCount();
+  updateSubmitState();
   go("form");
+}
+
+// ===== 목차 검증 (기존 iCMS 방식: 실패 시 [목차코드]+사유, 복수 건 확장) =====
+// 데모: 유효 목차코드에 "0654" 포함 시 통과, 그 외 실패
+function validateToc() {
+  const raw = document.getElementById("f-toc").value.trim();
+  if (!raw) { toast("목차코드를 입력해주세요."); return; }
+  const codes = raw.split(/[\s,]+/).filter(Boolean);
+  const fails = codes.filter(c => !c.includes("0654"));
+  const box = document.getElementById("toc-result");
+  if (fails.length === 0) {
+    box.innerHTML = `<div class="ok">✓ 유효한 목차코드입니다.</div>`;
+  } else {
+    box.innerHTML = `<div class="res-title">목차 검증 결과</div>` +
+      fails.map(c => `<div class="fail-item"><span class="fail-code">[${escapeHtml(c)}]</span><span class="fail-reason">과목이 일치 하지 않는 목차입니다.</span></div>`).join("");
+  }
+  box.style.display = "block";
+}
+function hideTocResult() {
+  const box = document.getElementById("toc-result");
+  if (box) { box.style.display = "none"; box.innerHTML = ""; }
+}
+function clearToc() {
+  document.getElementById("f-toc").value = "";
+  hideTocResult();
+}
+
+// ===== 등록/수정 버튼 활성화 (AI 출력 생성 전에는 비활성) =====
+function updateSubmitState() {
+  const hasOutput =
+    document.getElementById("paragraphs").children.length > 0 &&
+    document.getElementById("quizzes").children.length > 0;
+  document.getElementById("btn-submit").disabled = !hasOutput;
 }
 
 // ===== 글자수 =====
@@ -100,10 +143,14 @@ function fillOutput() {
   SAMPLE_PARAGRAPHS.forEach(p => addParagraph(p.title, p.summary));
   document.getElementById("quizzes").innerHTML = "";
   const n = Math.max(1, parseInt(document.getElementById("f-quizcount").value) || SAMPLE_QUIZZES.length);
+  if (!document.getElementById("f-quizcount").value.trim()) {
+    document.getElementById("f-quizcount").value = n; // 빈 값이면 생성 개수로 채움
+  }
   for (let i = 0; i < n; i++) {
     const q = SAMPLE_QUIZZES[i % SAMPLE_QUIZZES.length];
     addQuiz(q.q, q.opts, q.ans, i + 1);
   }
+  updateSubmitState();
 }
 
 // ===== 문단 추가 =====
@@ -112,7 +159,7 @@ function addParagraph(title = "", summary = "") {
   const div = document.createElement("div");
   div.className = "item-card";
   div.innerHTML = `
-    <span class="del-x" onclick="this.parentNode.remove()">×</span>
+    <span class="del-x" onclick="removeItem(this)">×</span>
     <div class="field" style="margin-bottom:10px">
       <input type="text" class="title-input" placeholder="소제목 (예: 1. 소녀와 들판)" value="${escapeAttr(title)}" />
     </div>
@@ -120,6 +167,12 @@ function addParagraph(title = "", summary = "") {
       <textarea rows="2" placeholder="문단 요약">${escapeHtml(summary)}</textarea>
     </div>`;
   wrap.appendChild(div);
+  updateSubmitState();
+}
+
+function removeItem(el) {
+  el.closest(".item-card").remove();
+  updateSubmitState();
 }
 
 // ===== 퀴즈 추가 =====
@@ -130,7 +183,7 @@ function addQuiz(q = "", opts = ["", ""], ans = 0, num = null) {
   div.className = "item-card";
   const gname = "ans-" + Date.now() + "-" + Math.floor(performance.now());
   div.innerHTML = `
-    <span class="del-x" onclick="this.parentNode.remove()">×</span>
+    <span class="del-x" onclick="removeItem(this)">×</span>
     <div class="quiz-row">
       <div class="quiz-main">
         <div class="field" style="margin-bottom:10px">
@@ -145,6 +198,7 @@ function addQuiz(q = "", opts = ["", ""], ans = 0, num = null) {
   const optsBox = div.querySelector(".opts");
   opts.forEach((o, i) => optsBox.appendChild(buildOption(gname, o, i === ans)));
   syncAnsBadge(div);
+  updateSubmitState();
 }
 
 const CIRCLE = ["①","②","③","④","⑤","⑥","⑦","⑧"];
@@ -211,7 +265,8 @@ function generateAI() {
 // ===== 등록/수정 제출 =====
 function submitForm() {
   const required = [
-    ["f-toc", "목차코드"], ["f-round", "회차코드"],
+    ["f-school", "수업과정(학교급)"], ["f-cgrade", "수업과정(학년)"], ["f-term", "수업과정(학기)"],
+    ["f-round", "회차코드"], ["f-toc", "목차코드"],
     ["f-title", "교과서 제목"], ["f-body", "교과서 본문"],
     ["f-quizcount", "퀴즈 갯수"], ["f-intro", "인트로"],
   ];
