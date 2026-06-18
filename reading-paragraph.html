@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>문단별 읽기 (학생 학습 화면) — 프로토타입</title>
+<style>
+:root{
+  --blue:#2f6bed; --blue-dark:#1d4fd0; --blue-soft:#eaf1fe;
+  --green:#22c55e; --green-dark:#16a34a; --green-soft:#dcfce7;
+  --red:#ef4444; --red-soft:#fee2e2;
+  --ink:#1e293b; --gray:#64748b; --line:#e2e8f0; --bg:#eef0f3;
+  --amber-soft:#fffbeb; --amber-line:#fde68a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Pretendard","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);font-size:15px;line-height:1.65}
+button{font-family:inherit;cursor:pointer}
+
+/* 프로토타입 바 */
+.proto-bar{background:#11203f;color:#cdddff;font-size:12px;padding:7px 16px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+.proto-bar .tag{background:var(--blue);color:#fff;border-radius:4px;padding:1px 7px;font-weight:700}
+.proto-bar a{color:#9ec1ff;text-decoration:underline}
+
+/* 앱 컨테이너 */
+.app{max-width:1000px;margin:22px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(20,30,60,.12)}
+
+/* 상단 바 */
+.topbar{background:var(--blue);color:#fff;display:flex;align-items:center;gap:16px;padding:0 18px;height:54px}
+.topbar .lec{background:rgba(255,255,255,.18);border-radius:20px;padding:5px 14px;font-weight:700;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.topbar .crumb{flex:1;font-weight:600;opacity:.95;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar .x{background:none;border:none;color:#fff;font-size:22px;line-height:1;opacity:.9}
+
+/* 탭 + 진행률 */
+.tabbar{display:flex;align-items:center;gap:20px;padding:12px 22px;border-bottom:1px solid var(--line)}
+.tab{display:flex;align-items:center;gap:7px;color:#94a3b8;font-weight:700;background:none;border:none;font-size:15px}
+.tab.active{color:var(--blue)}
+.tab.done{color:var(--gray)}
+.tab:disabled{cursor:not-allowed}
+.tab .badge{background:var(--blue);color:#fff;border-radius:10px;font-size:11px;padding:1px 8px;font-weight:700}
+.progress-wrap{margin-left:auto;display:flex;align-items:center;gap:10px;min-width:200px}
+.progress{flex:1;height:8px;background:#e9eef5;border-radius:6px;overflow:hidden}
+.progress > i{display:block;height:100%;background:var(--green);width:0;transition:width .3s}
+.progress-pct{font-weight:700;color:var(--gray);font-size:13px;min-width:38px;text-align:right}
+
+/* 본문 영역 */
+.stage{padding:22px}
+.view{display:none}
+.view.active{display:block}
+
+/* 소개 화면 */
+.intro{min-height:440px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#f5f7fb;border-radius:12px;padding:40px 24px}
+.intro h1{font-size:30px;color:#b45309;margin-bottom:14px}
+.grade-badge{background:#cfeaf0;color:#0e7490;border-radius:14px;padding:4px 14px;font-size:13px;font-weight:700;margin-bottom:18px}
+.intro p{max-width:620px;color:#475569;margin-bottom:28px}
+.btn-start{border:none;border-radius:30px;padding:14px 34px;color:#fff;font-weight:800;font-size:16px;background:linear-gradient(90deg,#2bb6c4,#e8a13c)}
+
+/* 문단 이동 칩 */
+.chips-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.chips-row .label{font-weight:800;margin-right:4px}
+.chip{border:1px solid var(--blue-soft);background:var(--blue-soft);color:var(--blue);border-radius:10px;padding:8px 12px;font-size:13px;font-weight:700;display:flex;flex-direction:column;align-items:center;line-height:1.25;min-width:64px}
+.chip .num{font-size:12px}
+.chip.current{background:var(--blue);color:#fff;border-color:var(--blue)}
+.chip.locked{background:#f1f5f9;color:#94a3b8;border-color:var(--line);cursor:not-allowed}
+.chip.done{background:var(--blue-soft);color:var(--blue)}
+
+/* 읽기 패널 */
+.reader{border:1px dashed #bcd0f7;border-radius:12px;padding:22px 24px;position:relative;background:#fcfdff}
+.reader .ptitle{display:inline-block;background:var(--blue);color:#fff;border-radius:8px;padding:4px 12px;font-weight:700;font-size:14px}
+.reader .pno{position:absolute;top:22px;right:24px;color:#94a3b8;font-size:13px;font-weight:600}
+.reader .body{margin-top:16px;font-size:16px;line-height:2;color:#334155}
+.vocab{background:#fde68a;border-radius:3px;padding:0 2px;cursor:pointer;font-weight:600}
+.vocab:hover{background:#fcd34d}
+
+/* 어휘 툴팁 */
+#tip{position:absolute;z-index:40;background:#1e293b;color:#fff;border-radius:10px;padding:10px 14px;max-width:280px;font-size:13.5px;line-height:1.5;display:none;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#tip b{display:block;color:#93c5fd;margin-bottom:3px}
+#tip::after{content:"";position:absolute;bottom:-7px;left:24px;border:7px solid transparent;border-top-color:#1e293b;border-bottom:0}
+
+/* 중심 내용 */
+.summary-toggle{margin-top:16px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:18px;text-align:center;color:var(--ink);font-weight:700;width:100%}
+.summary-toggle:hover{background:#f8fafc}
+.summary-box{margin-top:16px;border:1px solid var(--amber-line);background:var(--amber-soft);border-radius:12px;padding:18px 20px;display:none}
+.summary-box.show{display:block}
+.summary-box b{display:block;margin-bottom:8px}
+.summary-box p{color:#5b4708}
+
+/* 하단 이동 */
+.nav-row{display:flex;justify-content:space-between;gap:12px;margin-top:22px}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:11px 20px;font-weight:700;font-size:14px}
+.btn:hover{background:#f8fafc}
+.btn-primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-dark)}
+.btn-outline{background:#fff;border-color:var(--blue);color:var(--blue)}
+.btn-outline:hover{background:var(--blue-soft)}
+.btn-green{background:var(--green);border-color:var(--green);color:#fff}
+.btn-green:hover{background:var(--green-dark)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* 퀴즈 */
+.quiz-head{text-align:center;margin-bottom:22px}
+.quiz-head .t{font-size:20px;font-weight:800}
+.quiz-head .s{color:var(--gray);font-size:14px;margin-top:4px}
+.qmeta{color:var(--blue);font-weight:800;margin-bottom:8px}
+.qtext{font-size:17px;font-weight:700;margin-bottom:16px}
+.opt{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:13px 16px;margin-bottom:10px;background:#fff;cursor:pointer;font-size:15px}
+.opt:hover{border-color:#bcd0f7;background:#fafcff}
+.opt .mark{width:24px;font-weight:800;color:var(--gray)}
+.opt.correct{border-color:var(--green);background:var(--green-soft)}
+.opt.wrong{border-color:var(--red);background:var(--red-soft)}
+.opt.locked{cursor:default}
+.opt .res{margin-left:auto;font-weight:800}
+.opt.correct .res{color:var(--green-dark)}
+.opt.wrong .res{color:var(--red)}
+.feedback{border-radius:10px;padding:14px 16px;margin-top:6px;display:none;font-size:14px}
+.feedback.show{display:block}
+.feedback.ok{background:var(--green-soft);color:var(--green-dark)}
+.feedback.no{background:var(--red-soft);color:#b91c1c}
+.quiz-actions{text-align:center;margin-top:22px}
+
+/* 결과 */
+.result{min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#f5f7fb;border-radius:12px;padding:40px 24px}
+.result .emoji{font-size:56px}
+.result h2{color:var(--blue);font-size:24px;margin-top:8px}
+.result .score{font-size:44px;font-weight:900;margin:6px 0}
+.result .msg{color:#475569;margin-bottom:26px}
+.result .btns{display:flex;flex-direction:column;align-items:center;gap:12px}
+.result .row{display:flex;gap:12px}
+
+#toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e293b;color:#fff;padding:13px 24px;border-radius:10px;font-weight:600;opacity:0;pointer-events:none;transition:all .25s;z-index:60}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="proto-bar">
+  <span class="tag">PROTOTYPE</span>
+  교과서 읽기 — <b>문단별 읽기 (학생 학습 화면)</b>
+  <span>· 클릭으로 학습 흐름 체험 (더미 데이터)</span>
+  <a href="index.html">← 관리자 등록 화면(ICMS)</a>
+</div>
+
+<div class="app">
+  <!-- 상단 바 -->
+  <div class="topbar">
+    <span class="lec">20강 <span style="font-size:13px">⊙</span></span>
+    <span class="crumb">국어 &nbsp;›&nbsp; 캐츠정기평가 &nbsp;›&nbsp; 3-1 총괄평가</span>
+    <button class="x" onclick="toast('학습 화면을 닫습니다 (프로토타입)')">✕</button>
+  </div>
+
+  <!-- 탭 + 진행률 (소개 화면에서는 숨김) -->
+  <div class="tabbar" id="tabbar" style="display:none">
+    <button class="tab active" id="tab-read" onclick="gotoStage('read')">📖 문단별 읽기 <span class="badge" id="read-badge">1/5</span></button>
+    <button class="tab" id="tab-quiz" onclick="gotoStage('quiz')" disabled>✓ 확인 퀴즈</button>
+    <button class="tab" id="tab-result" onclick="gotoStage('result')" disabled>🏆 결과</button>
+    <div class="progress-wrap"><div class="progress"><i id="progbar"></i></div><span class="progress-pct" id="progpct">0%</span></div>
+  </div>
+
+  <div class="stage">
+    <!-- 소개 -->
+    <section id="v-intro" class="view active">
+      <div class="intro">
+        <h1 id="intro-title">책 깎는 소년</h1>
+        <span class="grade-badge" id="intro-grade">초등학교 5학년</span>
+        <p id="intro-desc"></p>
+        <button class="btn-start" onclick="startReading()">📖 읽기 시작</button>
+      </div>
+    </section>
+
+    <!-- 문단별 읽기 -->
+    <section id="v-read" class="view">
+      <div class="chips-row" id="chips"></div>
+      <div class="reader">
+        <span class="ptitle" id="r-title"></span>
+        <span class="pno" id="r-no"></span>
+        <div class="body" id="r-body"></div>
+      </div>
+      <button class="summary-toggle" id="sumToggle" onclick="toggleSummary()">💡 중심 내용 클릭해서 확인하기</button>
+      <div class="summary-box" id="sumBox"><b>💡 중심 내용</b><p id="sumText"></p></div>
+      <div class="nav-row">
+        <button class="btn" id="btn-prev" onclick="prevPara()">‹ 이전</button>
+        <button class="btn-primary btn" id="btn-next" onclick="nextPara()">다음 ›</button>
+      </div>
+    </section>
+
+    <!-- 확인 퀴즈 -->
+    <section id="v-quiz" class="view">
+      <div class="quiz-head">
+        <div class="t">✏️ 내용 확인 퀴즈</div>
+        <div class="s">글을 잘 읽었는지 확인해 보아요. 5문항이에요.</div>
+      </div>
+      <div class="qmeta" id="q-meta"></div>
+      <div class="qtext" id="q-text"></div>
+      <div id="q-opts"></div>
+      <div class="feedback" id="q-fb"></div>
+      <div class="quiz-actions">
+        <button class="btn-primary btn" id="q-next" onclick="nextQuiz()" disabled>다음 문제 ›</button>
+      </div>
+    </section>
+
+    <!-- 결과 -->
+    <section id="v-result" class="view">
+      <div class="result">
+        <div class="emoji" id="res-emoji">🎉</div>
+        <h2 id="res-title"></h2>
+        <div class="score" id="res-score"></div>
+        <div class="msg" id="res-msg"></div>
+        <div class="btns">
+          <div class="row">
+            <button class="btn-outline btn" onclick="restartReading()">📖 다시 읽기</button>
+            <button class="btn-outline btn" onclick="restartQuiz()">✓ 퀴즈 다시 풀기</button>
+          </div>
+          <button class="btn-green btn" onclick="toast('학습을 완료했어요! 🎉')">✓ 학습 완료</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div id="tip"></div>
+<div id="toast"></div>
+
+<script>
+/* ===== 더미 콘텐츠: 책 깎는 소년 ===== */
+const WORK = {
+  title: "책 깎는 소년",
+  grade: "초등학교 5학년",
+  intro: "글공부가 하고 싶은 소년 ‘장호’가 책 만드는 일을 배우며 자라는 이야기예요. 글자를 새기고 싶은 마음과 현실 사이에서 장호가 무엇을 깨닫게 되는지 함께 읽어 볼까요?"
+};
+
+const PARAS = [
+  { title:"장호의 부탁",
+    body:"장호는 어려서부터 글이 좋았다. 하지만 가난한 집안 형편에 글공부는 <span class='vocab' data-def='감히 바라거나 욕심내기 어려운 일.'>언감생심</span>이었다. 어느 날 장호는 책을 만드는 <span class='vocab' data-def='책을 인쇄하고 펴내던 옛날의 가게.'>서포</span>를 찾아가 각수 어른에게 부탁했다. “어르신, 저에게 글자 새기는 일을 가르쳐 주세요.” 각수 어른은 한참을 바라보다 <span class='vocab' data-def='기꺼이, 기분 좋게 선뜻 받아들이는 모양.'>흔쾌히</span> 고개를 끄덕였다.",
+    summary:"글공부가 하고 싶던 장호가 책을 만드는 서포를 찾아가 각수 어른에게 글자 새기는 일을 배우고 싶다고 부탁한다." },
+  { title:"대패질의 불만",
+    body:"그런데 각수 어른은 글자 대신 <span class='vocab' data-def='나무를 곱게 밀어 다듬는 일.'>대패질</span>부터 시켰다. 날마다 나무만 미는 장호는 슬슬 <span class='vocab' data-def='못마땅하게 여기는 마음.'>불만</span>이 쌓였다. 돈을 빨리 벌고 싶은 장호에게 대패질은 쓸데없이 느껴졌고, 가난한 어머니를 생각하면 마음이 더욱 조급해졌다.",
+    summary:"장호는 글자 새기는 법을 기대했지만 각수 어른은 대패질부터 시킨다. 돈을 빨리 벌고 싶은 장호는 대패질이 쓸데없게 느껴져 조급한 마음이 커진다." },
+  { title:"장호의 큰소리",
+    body:"“이까짓 대패질쯤이야!” 장호는 큰소리를 치며 나무를 마구 밀어 댔다. 하지만 <span class='vocab' data-def='서두르다가 도리어 일을 그르침.'>조급함</span> 탓에 나무 면은 울퉁불퉁했고, 각수 어른은 말없이 그 나무를 다시 깎게 했다.",
+    summary:"장호는 큰소리치며 서둘러 대패질을 하지만, 조급함 때문에 나무가 고르지 못해 다시 깎게 된다." },
+  { title:"봉운이의 부탁",
+    body:"봉운이는 서가에 남아 있는 책들 수를 헤아린 후 작업장으로 갔다. 늦은 시간인데도 각수 어른이 <span class='vocab' data-def='나무판에 글자나 그림을 새기는 일.'>판각</span>을 하느라 여념이 없었다. “저, 어르신, 서포 일 끝나고 난 뒤에 지가 여기 와서 일을 도와드려도 될랑가요?” “서포 일만으로도 힘들 텐데 여기 일까지 괜찮겠냐?” “예, 걱정 없구만요.” 봉운이가 큰 소리로 대답하자 각수 어른이 <span class='vocab' data-def='기꺼이, 기분 좋게 선뜻 받아들이는 모양.'>흔쾌히</span> 허락했다.",
+    summary:"봉운이가 서포 일을 마친 뒤 각수 어른의 작업장 일까지 돕겠다고 부탁하고, 각수 어른이 이를 허락한다." },
+  { title:"글자 새기기",
+    body:"두 달이 지나서야 각수 어른은 장호에게 처음으로 글자 새기는 칼을 쥐여 주었다. 반듯하게 다듬은 나무 위에 한 획 한 획 글자를 새기며, 장호는 <span class='vocab' data-def='기초가 되는 바탕.'>밑바탕</span>이 튼튼해야 좋은 글자를 새길 수 있다는 것을 비로소 깨달았다.",
+    summary:"마침내 글자 새기는 일을 배운 장호는, 대패질로 다진 밑바탕이 튼튼해야 좋은 글자를 새길 수 있음을 깨닫는다." }
+];
+
+const QUIZ = [
+  { q:"이 이야기에서 장호가 일을 배우려고 찾아간 곳은 어디인가요?",
+    opts:["서당","책을 만드는 서포","대장간","저잣거리"], ans:1,
+    fb:"장호는 책을 인쇄하고 펴내는 ‘서포’를 찾아가 각수 어른에게 일을 배우려 했어요." },
+  { q:"각수 어른이 장호에게 가장 먼저 시킨 일은 무엇인가요?",
+    opts:["글자 새기기","나무를 다듬는 대패질","책 나르기","먹 갈기"], ans:1,
+    fb:"각수 어른은 글자 새기기 전에 나무를 다듬는 ‘대패질’부터 시켰어요." },
+  { q:"장호가 대패질을 쓸데없다고 느낀 까닭은 무엇인가요?",
+    opts:["일이 너무 쉬워서","돈을 빨리 벌고 싶어서","글자가 더 재미있어서","어른이 무서워서"], ans:1,
+    fb:"돈을 빨리 벌고 싶은 장호에게는 글자와 상관없어 보이는 대패질이 쓸데없게 느껴졌어요." },
+  { q:"봉운이가 각수 어른에게 부탁한 것은 무엇인가요?",
+    opts:["글자를 가르쳐 달라","서포 일을 끝낸 뒤 작업장 일을 돕게 해 달라","책을 빌려 달라","품삯을 올려 달라"], ans:1,
+    fb:"봉운이는 서포 일을 마친 뒤 작업장 일까지 돕고 싶다고 부탁했고, 각수 어른이 흔쾌히 허락했어요." },
+  { q:"‘흔쾌히’의 뜻으로 알맞은 것은 무엇인가요?",
+    opts:["마지못해 억지로","기꺼이 선뜻 받아들이는 모양","천천히 망설이며","화가 난 모양"], ans:1,
+    fb:"‘흔쾌히’는 기꺼이, 기분 좋게 선뜻 받아들이는 모양을 뜻해요." }
+];
+
+const RESULT_TIER = {
+  5:{e:"🎉",t:"완벽해요! 최고!",m:"모든 문제를 맞혔어요! 글을 정말 꼼꼼하게 잘 읽었네요. 훌륭해요!"},
+  4:{e:"😃",t:"훌륭해요!",m:"글의 내용을 아주 잘 이해했어요! 복습도 열심히 해 봐요!"},
+  3:{e:"🙂",t:"잘 읽었어요!",m:"글의 내용을 꽤 잘 파악하고 있어요. 한 번 더 읽으면 완벽할 거예요!"},
+  2:{e:"😅",t:"조금 더 집중해요!",m:"어려운 문제들을 다시 확인하고 글을 다시 읽어 봐요."},
+  1:{e:"😢",t:"다시 읽어볼까요?",m:"글을 한 번 더 천천히 읽어 보면 내용이 잘 이해될 거예요!"},
+  0:{e:"😢",t:"다시 읽어볼까요?",m:"글을 한 번 더 천천히 읽어 보면 내용이 잘 이해될 거예요!"}
+};
+
+const CIRCLE=["①","②","③","④","⑤"];
+let cur=0;                 // 현재 문단 index
+let maxRead=0;             // 읽은 최대 문단 (칩 완료 표시용)
+let readDone=false;        // 모든 문단 읽음
+let qIndex=0, qAnswered=[], qCorrect=0;
+
+/* ===== 초기화 ===== */
+document.getElementById("intro-title").textContent = WORK.title;
+document.getElementById("intro-grade").textContent = WORK.grade;
+document.getElementById("intro-desc").textContent = WORK.intro;
+
+function showView(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.getElementById("v-"+id).classList.add("active");
+  hideTip();
+}
+
+/* ===== 소개 → 읽기 ===== */
+function startReading(){
+  document.getElementById("tabbar").style.display="flex";
+  gotoStage("read");
+}
+
+/* ===== 단계 이동 (탭) ===== */
+function gotoStage(stage){
+  ["read","quiz","result"].forEach(s=>{
+    document.getElementById("tab-"+s).classList.remove("active");
+  });
+  document.getElementById("tab-"+stage).classList.add("active");
+  if(stage==="read"){ showView("read"); renderPara(); }
+  else if(stage==="quiz"){ showView("quiz"); renderQuiz(); updateProgress(100); }
+  else if(stage==="result"){ showView("result"); }
+}
+
+/* ===== 문단별 읽기 ===== */
+function renderChips(){
+  const wrap=document.getElementById("chips");
+  wrap.innerHTML='<span class="label">문단 이동</span>';
+  PARAS.forEach((p,i)=>{
+    const locked = i>maxRead;          // 아직 도달 못한 문단은 잠금
+    const c=document.createElement("button");
+    c.className="chip "+(i===cur?"current":(locked?"locked":"done"));
+    c.innerHTML = (i<cur||i<maxRead && i!==cur ? "✓ " : "") +
+                  `<span class="num">${locked?"🔒":(i===cur?(i+1):"")}</span>${p.title}`;
+    if(!locked) c.onclick=()=>{ cur=i; renderPara(); };
+    wrap.appendChild(c);
+  });
+}
+function renderPara(){
+  const p=PARAS[cur];
+  document.getElementById("r-title").textContent=p.title;
+  document.getElementById("r-no").textContent="문단 "+(cur+1);
+  document.getElementById("r-body").innerHTML=p.body;
+  document.getElementById("sumText").textContent=p.summary;
+  document.getElementById("sumBox").classList.remove("show");
+  document.getElementById("sumToggle").style.display="block";
+  bindVocab();
+  maxRead=Math.max(maxRead,cur);
+  document.getElementById("read-badge").textContent=(cur+1)+"/"+PARAS.length;
+  document.getElementById("btn-prev").disabled = cur===0;
+  const last = cur===PARAS.length-1;
+  document.getElementById("btn-next").textContent = last ? "확인 퀴즈 풀기 ›" : "다음 ›";
+  renderChips();
+  updateProgress(Math.round((cur+1)/PARAS.length*100));
+}
+function prevPara(){ if(cur>0){cur--;renderPara();} }
+function nextPara(){
+  if(cur<PARAS.length-1){ cur++; renderPara(); }
+  else { readDone=true; unlockTab("quiz"); gotoStage("quiz"); }
+}
+function toggleSummary(){
+  document.getElementById("sumBox").classList.toggle("show");
+  document.getElementById("sumToggle").style.display="none";
+}
+function updateProgress(pct){
+  document.getElementById("progbar").style.width=pct+"%";
+  document.getElementById("progpct").textContent=pct+"%";
+}
+function unlockTab(s){ document.getElementById("tab-"+s).disabled=false; }
+
+/* ===== 어휘 툴팁 ===== */
+function bindVocab(){
+  document.querySelectorAll("#r-body .vocab").forEach(el=>{
+    el.onclick=(e)=>{ e.stopPropagation(); showTip(el); };
+  });
+}
+function showTip(el){
+  const tip=document.getElementById("tip");
+  tip.innerHTML="<b>"+el.textContent+"</b>"+el.dataset.def;
+  tip.style.display="block";
+  const r=el.getBoundingClientRect();
+  const tw=tip.offsetWidth;
+  let left=window.scrollX+r.left;
+  left=Math.min(left, window.scrollX+document.documentElement.clientWidth-tw-12);
+  tip.style.left=Math.max(8,left)+"px";
+  tip.style.top=(window.scrollY+r.top-tip.offsetHeight-12)+"px";
+}
+function hideTip(){ document.getElementById("tip").style.display="none"; }
+document.addEventListener("click",e=>{ if(!e.target.classList.contains("vocab")) hideTip(); });
+
+/* ===== 확인 퀴즈 ===== */
+function renderQuiz(){
+  const q=QUIZ[qIndex];
+  document.getElementById("q-meta").textContent="문제 "+(qIndex+1)+" / "+QUIZ.length;
+  document.getElementById("q-text").textContent=(qIndex+1)+". "+q.q;
+  const box=document.getElementById("q-opts"); box.innerHTML="";
+  q.opts.forEach((o,i)=>{
+    const d=document.createElement("div");
+    d.className="opt"; d.dataset.i=i;
+    d.innerHTML=`<span class="mark">${CIRCLE[i]}</span><span>${o}</span><span class="res"></span>`;
+    d.onclick=()=>answerQuiz(i);
+    box.appendChild(d);
+  });
+  const fb=document.getElementById("q-fb"); fb.className="feedback"; fb.textContent="";
+  const nb=document.getElementById("q-next");
+  nb.disabled=true;
+  nb.textContent = qIndex===QUIZ.length-1 ? "결과 보기 ›" : "다음 문제 ›";
+}
+function answerQuiz(sel){
+  const q=QUIZ[qIndex];
+  if(qAnswered[qIndex]!==undefined) return; // 이미 응답
+  qAnswered[qIndex]=sel;
+  const opts=document.querySelectorAll("#q-opts .opt");
+  opts.forEach(o=>{
+    const i=+o.dataset.i; o.classList.add("locked"); o.onclick=null;
+    if(i===q.ans){ o.classList.add("correct"); o.querySelector(".res").textContent="✓"; }
+    if(i===sel && sel!==q.ans){ o.classList.add("wrong"); o.querySelector(".res").textContent="✕"; }
+  });
+  const correct = sel===q.ans;
+  if(correct) qCorrect++;
+  const fb=document.getElementById("q-fb");
+  fb.className="feedback show "+(correct?"ok":"no");
+  fb.innerHTML=(correct?"<b>정답이에요! 🎉</b> ":"<b>아쉬워요!</b> ")+q.fb;
+  document.getElementById("q-next").disabled=false;
+}
+function nextQuiz(){
+  if(qIndex<QUIZ.length-1){ qIndex++; renderQuiz(); }
+  else { unlockTab("result"); showResult(); }
+}
+
+/* ===== 결과 ===== */
+function showResult(){
+  const tier=RESULT_TIER[qCorrect];
+  document.getElementById("res-emoji").textContent=tier.e;
+  document.getElementById("res-title").textContent=tier.t;
+  document.getElementById("res-score").textContent=qCorrect+" / "+QUIZ.length;
+  document.getElementById("res-msg").textContent=tier.m;
+  gotoStage("result");
+}
+function restartReading(){ cur=0; gotoStage("read"); }
+function restartQuiz(){ qIndex=0; qAnswered=[]; qCorrect=0; gotoStage("quiz"); }
+
+/* ===== 토스트 ===== */
+let tt;
+function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove("show"),2200); }
+
+/* ===== 단계 딥링크 (#read / #quiz / #result) ===== */
+function applyHash(){
+  const h=(location.hash||"").replace("#","");
+  if(h==="read"){ startReading(); }
+  else if(h==="quiz"){ readDone=true; maxRead=PARAS.length-1; unlockTab("quiz"); document.getElementById("tabbar").style.display="flex"; gotoStage("quiz"); }
+  else if(h==="result"){ qCorrect=4; unlockTab("quiz"); unlockTab("result"); document.getElementById("tabbar").style.display="flex"; showResult(); }
+}
+window.addEventListener("hashchange",applyHash);
+applyHash();
+</script>
+</body>
+</html>

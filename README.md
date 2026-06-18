@@ -7,12 +7,23 @@
 
 ## 🔗 바로 보기 (GitHub Pages)
 
-**👉 https://jihyun0326.github.io/icms-textbook-reading-prototype/**
+이 저장소에는 **2개의 프로토타입**이 들어 있습니다. (서로 상단 바에서 이동 가능)
 
+### 1) 관리자 — ICMS 콘텐츠 등록
+**👉 https://jihyun0326.github.io/icms-textbook-reading-prototype/**
 - 목록: [.../#list](https://jihyun0326.github.io/icms-textbook-reading-prototype/#list)
 - 등록(입력 전): [.../#register](https://jihyun0326.github.io/icms-textbook-reading-prototype/#register)
 - 상세: [.../#detail](https://jihyun0326.github.io/icms-textbook-reading-prototype/#detail)
 - 수정(프리필): [.../#edit](https://jihyun0326.github.io/icms-textbook-reading-prototype/#edit)
+
+### 2) 학생 학습 화면 — 문단별 읽기 (02.1)
+**👉 https://jihyun0326.github.io/icms-textbook-reading-prototype/reading-paragraph.html**
+- 문단별 읽기: [.../reading-paragraph.html#read](https://jihyun0326.github.io/icms-textbook-reading-prototype/reading-paragraph.html#read)
+- 확인 퀴즈: [.../reading-paragraph.html#quiz](https://jihyun0326.github.io/icms-textbook-reading-prototype/reading-paragraph.html#quiz)
+- 결과: [.../reading-paragraph.html#result](https://jihyun0326.github.io/icms-textbook-reading-prototype/reading-paragraph.html#result)
+
+> 소개 → 문단별 읽기(문단 칩·어휘 뜻풀이·중심 내용) → 확인 퀴즈(즉시 채점) → 결과(점수별 메시지) 흐름.
+> 콘텐츠 구성은 ‘꼼꼼히 읽기’와 동일하며 명칭만 다릅니다. 본 프로토타입은 **문단별 읽기** 기준입니다.
 
 ## 화면 흐름
 
