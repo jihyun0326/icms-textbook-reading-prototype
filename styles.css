@@ -286,6 +286,10 @@ table.grid td.code a:hover { text-decoration: underline; }
   padding: 8px 14px; font-weight: 700; height: fit-content; white-space: nowrap;
 }
 .opt-add { color: var(--blue); background: none; border: none; font-weight: 700; font-size: 12.5px; margin-top: 4px; }
+.opt-eyebrow { font-size: 12px; color: var(--gray-400); margin: 2px 0 6px; }
+.ex-label { font-weight: 700; font-size: 13px; margin: 14px 0 6px; }
+.ex-label .ex-help { font-weight: 400; font-size: 11.5px; color: var(--gray-400); margin-left: 8px; }
+.ex-input { display: block; width: 100%; border: 1px solid var(--gray-200); border-radius: 6px; padding: 8px 10px; background: #fff; resize: vertical; line-height: 1.6; }
 
 .form-actions { display: flex; justify-content: center; gap: 14px; margin-top: 26px; }
 .form-actions .btn { min-width: 120px; }

@@ -18,9 +18,9 @@ const SAMPLE_PARAGRAPHS = [
   { title: "2. 길 잃은 새", summary: "길을 잃은 작은 새를 발견한 소녀가 흔쾌히 새를 돌보아 주는 장면." },
 ];
 const SAMPLE_QUIZZES = [
-  { q: "소녀가 매일 들판에서 한 일은 무엇인가요?", opts: ["꽃을 돌보았다", "새를 잡았다", "씨앗을 심었다", "잠을 잤다"], ans: 0 },
-  { q: "소녀가 길을 잃은 새를 발견하고 한 행동은?", opts: ["모른 척했다", "흔쾌히 돌보아 주었다", "쫓아냈다", "새장에 가두었다"], ans: 1 },
-  { q: "건강을 되찾은 새가 소녀에게 준 보답은?", opts: ["황금 알", "신비한 씨앗", "노래", "깃털"], ans: 1 },
+  { q: "소녀가 매일 들판에서 한 일은 무엇인가요?", opts: ["꽃을 돌보았다", "새를 잡았다", "씨앗을 심었다", "잠을 잤다"], ans: 0, fb: "소녀는 매일 들판으로 나가 꽃을 돌보았어요. 그래서 정답은 ① ‘꽃을 돌보았다’ 입니다." },
+  { q: "소녀가 길을 잃은 새를 발견하고 한 행동은?", opts: ["모른 척했다", "흔쾌히 돌보아 주었다", "쫓아냈다", "새장에 가두었다"], ans: 1, fb: "길을 잃은 새를 본 소녀는 흔쾌히 돌보아 주었어요. 정답은 ② ‘흔쾌히 돌보아 주었다’ 입니다." },
+  { q: "건강을 되찾은 새가 소녀에게 준 보답은?", opts: ["황금 알", "신비한 씨앗", "노래", "깃털"], ans: 1, fb: "건강을 되찾은 새는 보답으로 신비한 씨앗을 주었어요. 정답은 ② ‘신비한 씨앗’ 입니다." },
 ];
 
 let formMode = "register"; // register | edit
@@ -155,7 +155,7 @@ function fillOutput() {
   }
   for (let i = 0; i < n; i++) {
     const q = SAMPLE_QUIZZES[i % SAMPLE_QUIZZES.length];
-    addQuiz(q.q, q.opts, q.ans, i + 1);
+    addQuiz(q.q, q.opts, q.ans, i + 1, q.fb);
   }
   updateSubmitState();
 }
@@ -183,7 +183,7 @@ function removeItem(el) {
 }
 
 // ===== 퀴즈 추가 =====
-function addQuiz(q = "", opts = ["", ""], ans = 0, num = null) {
+function addQuiz(q = "", opts = ["", ""], ans = 0, num = null, fb = "") {
   const wrap = document.getElementById("quizzes");
   const index = num || (wrap.children.length + 1);
   const div = document.createElement("div");
@@ -194,17 +194,18 @@ function addQuiz(q = "", opts = ["", ""], ans = 0, num = null) {
     <div class="quiz-row">
       <div class="quiz-main">
         <div class="field" style="margin-bottom:10px">
-          <input type="text" class="title-input" placeholder="Q${index}. 문항을 입력하세요" value="${escapeAttr(q ? 'Q' + index + '. ' + q : '')}" />
+          <input type="text" class="title-input" placeholder="퀴즈 ${index}: 문항을 입력하세요" value="${escapeAttr(q ? '퀴즈 ' + index + ': ' + q : '')}" />
         </div>
+        <div class="opt-eyebrow">보기 (라디오로 정답 선택)</div>
         <div class="opts"></div>
         <button class="opt-add" onclick="addOption(this)">+ 보기 추가</button>
+        <div class="ex-label">해설 <span class="ex-help">정답·오답 동일 내용 · 맞으면 앞에 “정답이에요!”, 틀리면 “틀렸어요.” 만 자동으로 붙음</span></div>
+        <textarea class="ex-input" rows="2" placeholder="해설 내용을 입력하세요">${escapeHtml(fb)}</textarea>
       </div>
-      <div class="ans-badge">정답 : <span class="ans-num">①</span></div>
     </div>`;
   wrap.appendChild(div);
   const optsBox = div.querySelector(".opts");
   opts.forEach((o, i) => optsBox.appendChild(buildOption(gname, o, i === ans)));
-  syncAnsBadge(div);
   updateSubmitState();
 }
 
@@ -248,9 +249,11 @@ function renumberOptions(card) {
 }
 
 function syncAnsBadge(card) {
+  const el = card.querySelector(".ans-num");
+  if (!el) return; // 정답 배지 제거됨(정답은 라디오로 표시)
   const radios = [...card.querySelectorAll(".opt input[type=radio]")];
   const idx = radios.findIndex(r => r.checked);
-  card.querySelector(".ans-num").textContent = CIRCLE[idx >= 0 ? idx : 0];
+  el.textContent = CIRCLE[idx >= 0 ? idx : 0];
 }
 
 // ===== AI 콘텐츠 자동 생성 (CASE 2 → CASE 3) =====
