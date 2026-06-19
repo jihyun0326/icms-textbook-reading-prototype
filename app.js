@@ -199,7 +199,7 @@ function addQuiz(q = "", opts = ["", ""], ans = 0, num = null, fb = "") {
         <div class="opt-eyebrow">보기 (라디오로 정답 선택)</div>
         <div class="opts"></div>
         <button class="opt-add" onclick="addOption(this)">+ 보기 추가</button>
-        <div class="ex-label">해설 <span class="ex-help">정답·오답 동일 내용 · 맞으면 앞에 “정답이에요!”, 틀리면 “틀렸어요.” 만 자동으로 붙음</span></div>
+        <div class="ex-label">해설 <span class="ex-help">정답·오답 동일 내용 · 맞으면 앞에 “정답이에요!”, 틀리면 “틀렸어요.” 자동으로 추가</span></div>
         <textarea class="ex-input" rows="2" placeholder="해설 내용을 입력하세요">${escapeHtml(fb)}</textarea>
       </div>
     </div>`;
