@@ -166,7 +166,7 @@ button{font-family:inherit;cursor:pointer}
     <section id="v-intro" class="view active">
       <div class="intro">
         <h1 id="intro-title">책 깎는 소년</h1>
-        <span class="grade-badge" id="intro-grade">초등학교 5학년</span>
+        <span class="grade-badge" id="intro-grade">김단비</span>
         <p id="intro-desc"></p>
         <button class="btn-start" onclick="startReading()">📖 읽기 시작</button>
       </div>
@@ -230,7 +230,7 @@ button{font-family:inherit;cursor:pointer}
 /* ===== 더미 콘텐츠: 책 깎는 소년 ===== */
 const WORK = {
   title: "책 깎는 소년",
-  grade: "초등학교 5학년",
+  author: "김단비",
   intro: "글공부가 하고 싶은 소년 ‘장호’가 책 만드는 일을 배우며 자라는 이야기예요. 글자를 새기고 싶은 마음과 현실 사이에서 장호가 무엇을 깨닫게 되는지 함께 읽어 볼까요?"
 };
 
@@ -322,7 +322,7 @@ let qIndex=0, qAnswered=[], qCorrect=0;
 
 /* ===== 초기화 ===== */
 document.getElementById("intro-title").textContent = WORK.title;
-document.getElementById("intro-grade").textContent = WORK.grade;
+document.getElementById("intro-grade").textContent = WORK.author;
 document.getElementById("intro-desc").textContent = WORK.intro;
 
 function showView(id){
