@@ -191,10 +191,11 @@
               <div class="charcount"><span id="f-count">0</span>자</div>
               <div class="hint">💡 문단을 직접 나누려면 ///로 구분하세요. 없으면 AI가 자동으로 나눠요.</div>
             </div>
-            <div class="field" style="margin-bottom:0">
+            <div class="field">
               <label>퀴즈 갯수<span class="req">*</span></label>
               <input type="text" id="f-quizcount" value="3" style="width:120px" />
             </div>
+            <button class="btn btn-blue-o" style="width:100%" onclick="generateAI()">✨ AI 콘텐츠 자동 생성</button>
           </div>
 
           <!-- AI 출력 -->
@@ -221,7 +222,6 @@
 
         <div class="form-actions">
           <button class="btn btn-dark" id="btn-cancel" onclick="cancelForm()">취소</button>
-          <button class="btn btn-blue-o" onclick="generateAI()">AI 콘텐츠 자동 생성</button>
           <button class="btn btn-blue" id="btn-submit" onclick="submitForm()">등록하기</button>
         </div>
       </section>
