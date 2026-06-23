@@ -17,6 +17,11 @@ const SAMPLE_PARAGRAPHS = [
   { title: "1. 소녀와 들판", summary: "마음씨 착한 소녀가 매일 들판의 꽃을 돌보며 지내는 평화로운 일상을 소개한다." },
   { title: "2. 길 잃은 새", summary: "길을 잃은 작은 새를 발견한 소녀가 흔쾌히 새를 돌보아 주는 장면." },
 ];
+const SAMPLE_WORDS = [
+  { word: "흔쾌히", def: "기꺼이, 기분 좋게 선뜻 받아들이는 모양." },
+  { word: "보답", def: "남에게 받은 은혜나 도움을 갚음." },
+  { word: "들판", def: "넓고 평평하게 펼쳐진 땅." },
+];
 const SAMPLE_QUIZZES = [
   { q: "소녀가 매일 들판에서 한 일은 무엇인가요?", opts: ["꽃을 돌보았다", "새를 잡았다", "씨앗을 심었다", "잠을 잤다"], ans: 0, fb: "소녀는 매일 들판으로 나가 꽃을 돌보았어요. 그래서 정답은 ① ‘꽃을 돌보았다’ 입니다." },
   { q: "소녀가 길을 잃은 새를 발견하고 한 행동은?", opts: ["모른 척했다", "흔쾌히 돌보아 주었다", "쫓아냈다", "새장에 가두었다"], ans: 1, fb: "길을 잃은 새를 본 소녀는 흔쾌히 돌보아 주었어요. 정답은 ② ‘흔쾌히 돌보아 주었다’ 입니다." },
@@ -67,6 +72,7 @@ function openRegister() {
   document.getElementById("f-quizcount").value = "";
   document.getElementById("f-intro").value = "";
   document.getElementById("paragraphs").innerHTML = "";
+  document.getElementById("words").innerHTML = "";
   document.getElementById("quizzes").innerHTML = "";
   hideTocResult();
   updateCount();
@@ -148,6 +154,10 @@ function fillOutput() {
   document.getElementById("f-intro").value = SAMPLE_INTRO;
   document.getElementById("paragraphs").innerHTML = "";
   SAMPLE_PARAGRAPHS.forEach(p => addParagraph(p.title, p.summary));
+  // 낱말 풀이 — 같은 낱말은 처음 나온 1건만 (중복 제거)
+  document.getElementById("words").innerHTML = "";
+  const seenWord = new Set();
+  SAMPLE_WORDS.forEach(w => { if (!seenWord.has(w.word)) { seenWord.add(w.word); addWord(w.word, w.def); } });
   document.getElementById("quizzes").innerHTML = "";
   const n = Math.max(1, parseInt(document.getElementById("f-quizcount").value) || SAMPLE_QUIZZES.length);
   if (!document.getElementById("f-quizcount").value.trim()) {
@@ -180,6 +190,22 @@ function addParagraph(title = "", summary = "") {
 function removeItem(el) {
   el.closest(".item-card").remove();
   updateSubmitState();
+}
+
+// ===== 낱말 풀이 추가 =====
+function addWord(word = "", def = "") {
+  const wrap = document.getElementById("words");
+  const div = document.createElement("div");
+  div.className = "item-card";
+  div.innerHTML = `
+    <span class="del-x" onclick="removeItem(this)">×</span>
+    <div class="field" style="margin-bottom:10px">
+      <input type="text" class="title-input" placeholder="낱말" value="${escapeAttr(word)}" />
+    </div>
+    <div class="field" style="margin-bottom:0">
+      <textarea rows="2" placeholder="뜻풀이">${escapeHtml(def)}</textarea>
+    </div>`;
+  wrap.appendChild(div);
 }
 
 // ===== 퀴즈 추가 =====
