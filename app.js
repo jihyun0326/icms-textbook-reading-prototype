@@ -297,7 +297,7 @@ function submitForm() {
     const dup = LIST_ROWS.find(r => r.course === school && r.grade === cgrade && r.term === term && r.title === title);
     if (dup) {
       const box = document.getElementById("reg-dup-msg");
-      box.textContent = `⚠ 이미 등록된 콘텐츠입니다. 동일 수업과정·콘텐츠 제목(${dup.code})이 이미 존재해 등록할 수 없습니다.`;
+      box.textContent = "⚠ 이미 등록된 콘텐츠입니다. 동일 수업과정·콘텐츠 제목이 이미 존재해 등록할 수 없습니다.";
       box.style.display = "block";
       box.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
