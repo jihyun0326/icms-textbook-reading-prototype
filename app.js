@@ -88,7 +88,7 @@ function openEdit() {
   document.getElementById("f-cgrade").value = "5학년";
   document.getElementById("f-term").value = "1학기";
   document.getElementById("f-cms-title").value = "사랑이 뭔데요";
-  setRegInfoLocked(true); // 수정: 수업과정 변경 불가
+  setRegInfoLocked(false); // 수정: 수업과정도 편집 가능
   document.getElementById("f-title").value = "사랑이 뭔데요";
   document.getElementById("f-author").value = "";
   document.getElementById("f-body").value = SAMPLE_BODY;
