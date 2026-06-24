@@ -281,6 +281,19 @@ function submitForm() {
   if (document.getElementById("paragraphs").children.length < 1) { toast("문단을 1개 이상 추가해주세요."); return; }
   if (document.getElementById("quizzes").children.length < 1) { toast("퀴즈를 1개 이상 추가해주세요."); return; }
 
+  // 등록 시 중복 검사: 동일 수업과정 + 콘텐츠 제목이 이미 S3(목록)에 있으면 차단
+  if (formMode === "register") {
+    const school = document.getElementById("f-school").value.trim();
+    const cgrade = document.getElementById("f-cgrade").value.trim();
+    const term   = document.getElementById("f-term").value.trim();
+    const title  = document.getElementById("f-cms-title").value.trim();
+    const dup = LIST_ROWS.find(r => r.course === school && r.grade === cgrade && r.term === term && r.title === title);
+    if (dup) {
+      toast(`이미 등록된 콘텐츠입니다. 동일 수업과정·제목(${dup.code})이 존재해 등록할 수 없습니다.`);
+      return;
+    }
+  }
+
   if (formMode === "edit") {
     toast("수정이 완료되었습니다.");
     setTimeout(() => go("detail"), 700);
