@@ -73,6 +73,7 @@ function openRegister() {
   document.getElementById("paragraphs").innerHTML = "";
   document.getElementById("words").innerHTML = "";
   document.getElementById("quizzes").innerHTML = "";
+  hideDupMsg();
   updateCount();
   updateSubmitState();
   go("form");
@@ -268,7 +269,13 @@ function generateAI() {
 }
 
 // ===== 등록/수정 제출 =====
+function hideDupMsg() {
+  const box = document.getElementById("reg-dup-msg");
+  if (box) { box.style.display = "none"; box.textContent = ""; }
+}
+
 function submitForm() {
+  hideDupMsg();
   const required = [
     ["f-school", "수업과정(학교급)"], ["f-cgrade", "수업과정(학년)"], ["f-term", "수업과정(학기)"],
     ["f-cms-title", "콘텐츠 제목"],
@@ -289,7 +296,10 @@ function submitForm() {
     const title  = document.getElementById("f-cms-title").value.trim();
     const dup = LIST_ROWS.find(r => r.course === school && r.grade === cgrade && r.term === term && r.title === title);
     if (dup) {
-      toast(`이미 등록된 콘텐츠입니다. 동일 수업과정·제목(${dup.code})이 존재해 등록할 수 없습니다.`);
+      const box = document.getElementById("reg-dup-msg");
+      box.textContent = `⚠ 이미 등록된 콘텐츠입니다. 동일 수업과정·콘텐츠 제목(${dup.code})이 이미 존재해 등록할 수 없습니다.`;
+      box.style.display = "block";
+      box.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
   }

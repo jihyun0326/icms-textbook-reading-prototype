@@ -216,6 +216,7 @@ table.grid td.code a:hover { text-decoration: underline; }
 .req { color: var(--red); margin-left: 2px; }
 
 .reg-info { display: flex; gap: 40px; align-items: center; flex-wrap: wrap; }
+.dup-msg { margin-top: 16px; background: #fee2e2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 8px; padding: 11px 14px; font-size: 13.5px; font-weight: 600; }
 .field-inline { display: flex; align-items: center; gap: 12px; }
 .field-inline label { font-weight: 700; white-space: nowrap; }
 .field-inline select, .field-inline input {

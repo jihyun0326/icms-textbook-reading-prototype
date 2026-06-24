@@ -136,25 +136,26 @@
           <div class="reg-info">
             <div class="field-inline">
               <label>수업과정<span class="req">*</span></label>
-              <select id="f-school">
+              <select id="f-school" onchange="hideDupMsg()">
                 <option value="">학교급</option>
                 <option>초등</option><option>중등</option><option>고등</option><option>공통</option>
               </select>
-              <select id="f-cgrade">
+              <select id="f-cgrade" onchange="hideDupMsg()">
                 <option value="">학년</option>
                 <option>1학년</option><option>2학년</option><option>3학년</option>
                 <option>4학년</option><option>5학년</option><option>6학년</option>
               </select>
-              <select id="f-term">
+              <select id="f-term" onchange="hideDupMsg()">
                 <option value="">학기</option>
                 <option>1학기</option><option>2학기</option>
               </select>
             </div>
             <div class="field-inline">
               <label>콘텐츠 제목<span class="req">*</span></label>
-              <input type="text" id="f-cms-title" placeholder="콘텐츠 제목" style="min-width:300px" />
+              <input type="text" id="f-cms-title" placeholder="콘텐츠 제목" style="min-width:300px" oninput="hideDupMsg()" />
             </div>
           </div>
+          <div id="reg-dup-msg" class="dup-msg" style="display:none"></div>
         </div>
 
         <div class="two-col">
