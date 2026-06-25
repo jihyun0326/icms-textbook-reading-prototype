@@ -42,7 +42,7 @@ button{font-family:inherit;cursor:pointer}
 .tab.done{color:var(--gray)}
 .tab:disabled{cursor:not-allowed}
 .tab .badge{background:var(--blue);color:#fff;border-radius:10px;font-size:11px;padding:1px 8px;font-weight:700}
-.tab-title{font-weight:700;color:var(--ink);font-size:14px;border-left:1px solid var(--line);padding-left:14px;white-space:nowrap}
+.tab-title{font-weight:800;color:var(--ink);font-size:15px;margin-right:10px;white-space:nowrap}
 .progress-wrap{margin-left:auto;display:flex;align-items:center;gap:10px;min-width:200px}
 .progress{flex:1;height:8px;background:#e9eef5;border-radius:6px;overflow:hidden}
 .progress > i{display:block;height:100%;background:var(--green);width:0;transition:width .3s}
@@ -159,8 +159,8 @@ button{font-family:inherit;cursor:pointer}
 
   <!-- 탭 + 진행률 (소개 화면에서는 숨김) -->
   <div class="tabbar" id="tabbar" style="display:none">
-    <button class="tab active" id="tab-read" onclick="gotoStage('read')">📖 문단별 읽기</button>
     <span class="tab-title" id="read-title"></span>
+    <button class="tab active" id="tab-read" onclick="gotoStage('read')">📖 꼼꼼히 읽기 <span class="badge" id="read-badge">1/5</span></button>
     <button class="tab" id="tab-quiz" onclick="gotoStage('quiz')" disabled>✓ 확인 퀴즈</button>
     <button class="tab" id="tab-result" onclick="gotoStage('result')" disabled>🏆 결과</button>
     <div class="progress-wrap"><div class="progress"><i id="progbar"></i></div><span class="progress-pct" id="progpct">0%</span></div>
@@ -378,6 +378,7 @@ function renderPara(){
   document.getElementById("sumText").textContent=p.summary;
   bindVocab();
   maxRead=Math.max(maxRead,cur);
+  document.getElementById("read-badge").textContent=(cur+1)+"/"+PARAS.length;
   document.getElementById("btn-prev").disabled = cur===0;
   const last = cur===PARAS.length-1;
   document.getElementById("btn-next").textContent = last ? "확인 퀴즈 풀기 ›" : "다음 ›";
