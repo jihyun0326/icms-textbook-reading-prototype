@@ -32,6 +32,7 @@ button{font-family:inherit;cursor:pointer}
 .topbar{background:var(--blue);color:#fff;display:flex;align-items:center;gap:16px;padding:0 18px;height:54px}
 .topbar .lec{background:rgba(255,255,255,.18);border-radius:20px;padding:5px 14px;font-weight:700;display:flex;align-items:center;gap:6px;white-space:nowrap}
 .topbar .crumb{flex:1;font-weight:600;opacity:.95;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar .gnb-title{font-weight:600;font-size:15px;opacity:1}
 .topbar .x{background:none;border:none;color:#fff;font-size:22px;line-height:1;opacity:.9}
 
 /* 탭 + 진행률 */
@@ -148,8 +149,7 @@ button{font-family:inherit;cursor:pointer}
 <div class="app">
   <!-- 상단 바 -->
   <div class="topbar">
-    <span class="lec">20강 <span style="font-size:13px">⊙</span></span>
-    <span class="crumb">국어 &nbsp;›&nbsp; 캐츠정기평가 &nbsp;›&nbsp; 3-1 총괄평가</span>
+    <span class="crumb gnb-title">국어 3-1 &gt; 교과서 읽기</span>
     <button class="x" onclick="toast('학습 화면을 닫습니다 (프로토타입)')">✕</button>
   </div>
 
