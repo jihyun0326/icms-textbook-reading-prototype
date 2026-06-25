@@ -34,6 +34,9 @@ button{font-family:inherit;cursor:pointer}
 .topbar .crumb{flex:1;font-weight:600;opacity:.95;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar .gnb-title{font-weight:600;font-size:15px;opacity:1}
 .topbar .x{background:none;border:none;color:#fff;font-size:22px;line-height:1;opacity:.9}
+.tempsave-row{text-align:center;margin-top:14px}
+.tempsave-btn{border:1px solid var(--line);background:#fff;color:var(--gray);border-radius:10px;padding:10px 24px;font-weight:700;font-size:14px}
+.tempsave-btn:hover{background:#f8fafc}
 
 /* 탭 + 진행률 */
 .tabbar{display:flex;align-items:center;gap:20px;padding:12px 22px;border-bottom:1px solid var(--line)}
@@ -191,6 +194,9 @@ button{font-family:inherit;cursor:pointer}
         <button class="btn" id="btn-prev" onclick="prevPara()">‹ 이전</button>
         <button class="btn-primary btn" id="btn-next" onclick="nextPara()">다음 ›</button>
       </div>
+      <div class="tempsave-row">
+        <button class="tempsave-btn" onclick="toast('임시저장되었습니다.')">임시저장</button>
+      </div>
     </section>
 
     <!-- 확인 퀴즈 -->
@@ -205,6 +211,9 @@ button{font-family:inherit;cursor:pointer}
       <div class="feedback" id="q-fb"></div>
       <div class="quiz-actions">
         <button class="btn-primary btn" id="q-next" onclick="nextQuiz()" disabled>다음 문제 ›</button>
+      </div>
+      <div class="tempsave-row">
+        <button class="tempsave-btn" onclick="toast('임시저장되었습니다.')">임시저장</button>
       </div>
     </section>
 

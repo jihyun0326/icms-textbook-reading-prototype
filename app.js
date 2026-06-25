@@ -313,12 +313,6 @@ function submitForm() {
   }
 }
 
-// ===== 임시저장 (초안) — 느슨한 저장: 필수값·AI 출력 없어도 허용 =====
-function tempSave() {
-  hideDupMsg();
-  toast("임시저장되었습니다.");
-}
-
 function cancelForm() {
   go(formMode === "edit" ? "detail" : "list");
 }
