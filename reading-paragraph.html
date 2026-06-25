@@ -26,7 +26,7 @@ button{font-family:inherit;cursor:pointer}
 .proto-bar a{color:#9ec1ff;text-decoration:underline}
 
 /* 앱 컨테이너 — 1334×800 고정 비율 */
-.app{width:1334px;height:800px;flex:none;display:flex;flex-direction:column;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(20,30,60,.12);transform-origin:center center}
+.app{position:relative;width:1334px;height:800px;flex:none;display:flex;flex-direction:column;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(20,30,60,.12);transform-origin:center center}
 
 /* 상단 바 */
 .topbar{background:var(--blue);color:#fff;display:flex;align-items:center;gap:16px;padding:0 18px;height:54px}
@@ -42,6 +42,7 @@ button{font-family:inherit;cursor:pointer}
 .tab.done{color:var(--gray)}
 .tab:disabled{cursor:not-allowed}
 .tab .badge{background:var(--blue);color:#fff;border-radius:10px;font-size:11px;padding:1px 8px;font-weight:700}
+.tab-title{font-weight:700;color:var(--ink);font-size:14px;border-left:1px solid var(--line);padding-left:14px;white-space:nowrap}
 .progress-wrap{margin-left:auto;display:flex;align-items:center;gap:10px;min-width:200px}
 .progress{flex:1;height:8px;background:#e9eef5;border-radius:6px;overflow:hidden}
 .progress > i{display:block;height:100%;background:var(--green);width:0;transition:width .3s}
@@ -125,13 +126,16 @@ button{font-family:inherit;cursor:pointer}
 .quiz-actions{text-align:center;margin-top:22px}
 
 /* 결과 */
-.result{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#f5f7fb;border-radius:12px;padding:40px 24px}
-.result .emoji{font-size:56px}
-.result h2{color:var(--blue);font-size:24px;margin-top:8px}
-.result .score{font-size:44px;font-weight:900;margin:6px 0}
-.result .msg{color:#475569;margin-bottom:26px}
-.result .btns{display:flex;flex-direction:column;align-items:center;gap:12px}
-.result .row{display:flex;gap:12px}
+/* 결과 팝업(모달) */
+.result-modal{position:absolute;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;z-index:45}
+.result-modal.show{display:flex}
+.result-pop{background:#fff;border-radius:18px;padding:36px 40px 32px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.3);width:86%;max-width:460px}
+.result-pop .emoji{font-size:56px}
+.result-pop h2{color:var(--blue);font-size:24px;margin-top:8px}
+.result-pop .score{font-size:44px;font-weight:900;margin:6px 0}
+.result-pop .msg{color:#475569;margin-bottom:26px}
+.result-pop .btns{display:flex;flex-direction:column;align-items:center;gap:12px}
+.result-pop .row{display:flex;gap:12px}
 
 #toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e293b;color:#fff;padding:13px 24px;border-radius:10px;font-weight:600;opacity:0;pointer-events:none;transition:all .25s;z-index:60}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -156,6 +160,7 @@ button{font-family:inherit;cursor:pointer}
   <!-- 탭 + 진행률 (소개 화면에서는 숨김) -->
   <div class="tabbar" id="tabbar" style="display:none">
     <button class="tab active" id="tab-read" onclick="gotoStage('read')">📖 문단별 읽기</button>
+    <span class="tab-title" id="read-title"></span>
     <button class="tab" id="tab-quiz" onclick="gotoStage('quiz')" disabled>✓ 확인 퀴즈</button>
     <button class="tab" id="tab-result" onclick="gotoStage('result')" disabled>🏆 결과</button>
     <div class="progress-wrap"><div class="progress"><i id="progbar"></i></div><span class="progress-pct" id="progpct">0%</span></div>
@@ -203,22 +208,23 @@ button{font-family:inherit;cursor:pointer}
       </div>
     </section>
 
-    <!-- 결과 -->
-    <section id="v-result" class="view">
-      <div class="result">
-        <div class="emoji" id="res-emoji">🎉</div>
-        <h2 id="res-title"></h2>
-        <div class="score" id="res-score"></div>
-        <div class="msg" id="res-msg"></div>
-        <div class="btns">
-          <div class="row">
-            <button class="btn-outline btn" onclick="restartReading()">📖 다시 읽기</button>
-            <button class="btn-outline btn" onclick="restartQuiz()">✓ 퀴즈 다시 풀기</button>
-          </div>
-          <button class="btn-green btn" onclick="toast('학습을 완료했어요! 🎉')">✓ 학습 완료</button>
+  </div>
+
+  <!-- 결과 팝업(모달) -->
+  <div class="result-modal" id="result-modal">
+    <div class="result-pop">
+      <div class="emoji" id="res-emoji">🎉</div>
+      <h2 id="res-title"></h2>
+      <div class="score" id="res-score"></div>
+      <div class="msg" id="res-msg"></div>
+      <div class="btns">
+        <div class="row">
+          <button class="btn-outline btn" onclick="restartReading()">📖 다시 읽기</button>
+          <button class="btn-outline btn" onclick="restartQuiz()">✓ 퀴즈 다시 풀기</button>
         </div>
+        <button class="btn-green btn" onclick="completeStudy()">✓ 학습 완료</button>
       </div>
-    </section>
+    </div>
   </div>
 </div>
 </div>
@@ -322,6 +328,7 @@ let qIndex=0, qAnswered=[], qCorrect=0;
 
 /* ===== 초기화 ===== */
 document.getElementById("intro-title").textContent = WORK.title;
+document.getElementById("read-title").textContent = WORK.title;
 document.getElementById("intro-grade").textContent = WORK.author;
 document.getElementById("intro-desc").textContent = WORK.intro;
 
@@ -343,9 +350,9 @@ function gotoStage(stage){
     document.getElementById("tab-"+s).classList.remove("active");
   });
   document.getElementById("tab-"+stage).classList.add("active");
-  if(stage==="read"){ showView("read"); renderPara(); }
-  else if(stage==="quiz"){ showView("quiz"); renderQuiz(); updateProgress(100); }
-  else if(stage==="result"){ showView("result"); }
+  if(stage==="read"){ hideResult(); showView("read"); renderPara(); }
+  else if(stage==="quiz"){ hideResult(); showView("quiz"); renderQuiz(); updateProgress(100); }
+  else if(stage==="result"){ showResult(); }
 }
 
 /* ===== 문단별 읽기 ===== */
@@ -459,17 +466,21 @@ function nextQuiz(){
   else { unlockTab("result"); showResult(); }
 }
 
-/* ===== 결과 ===== */
+/* ===== 결과 (팝업/모달) ===== */
 function showResult(){
   const tier=RESULT_TIER[qCorrect];
   document.getElementById("res-emoji").textContent=tier.e;
   document.getElementById("res-title").textContent=tier.t;
   document.getElementById("res-score").textContent=qCorrect+" / "+QUIZ.length;
   document.getElementById("res-msg").textContent=tier.m;
-  gotoStage("result");
+  ["read","quiz","result"].forEach(s=>document.getElementById("tab-"+s).classList.remove("active"));
+  document.getElementById("tab-result").classList.add("active");
+  document.getElementById("result-modal").classList.add("show"); // 팝업 노출 (뒤 화면 유지)
 }
-function restartReading(){ cur=0; gotoStage("read"); }
-function restartQuiz(){ qIndex=0; qAnswered=[]; qCorrect=0; gotoStage("quiz"); }
+function hideResult(){ document.getElementById("result-modal").classList.remove("show"); }
+function completeStudy(){ hideResult(); toast("학습을 완료했어요! 🎉"); }
+function restartReading(){ hideResult(); cur=0; gotoStage("read"); }
+function restartQuiz(){ hideResult(); qIndex=0; qAnswered=[]; qCorrect=0; gotoStage("quiz"); }
 
 /* ===== 토스트 ===== */
 let tt;
@@ -480,7 +491,7 @@ function applyHash(){
   const h=(location.hash||"").replace("#","");
   if(h==="read"){ startReading(); }
   else if(h==="quiz"){ readDone=true; maxRead=PARAS.length-1; unlockTab("quiz"); document.getElementById("tabbar").style.display="flex"; gotoStage("quiz"); }
-  else if(h==="result"){ qCorrect=4; unlockTab("quiz"); unlockTab("result"); document.getElementById("tabbar").style.display="flex"; showResult(); }
+  else if(h==="result"){ readDone=true; maxRead=PARAS.length-1; unlockTab("quiz"); unlockTab("result"); document.getElementById("tabbar").style.display="flex"; gotoStage("quiz"); qCorrect=4; showResult(); }
 }
 window.addEventListener("hashchange",applyHash);
 applyHash();
