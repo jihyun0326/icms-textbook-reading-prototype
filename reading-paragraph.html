@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>문단별 읽기 (학생 학습 화면) — 프로토타입</title>
+<title>꼼꼼히 읽기 (학생 학습 화면) — 프로토타입</title>
 <style>
 :root{
   --blue:#2f6bed; --blue-dark:#1d4fd0; --blue-soft:#eaf1fe;
@@ -144,7 +144,7 @@ button{font-family:inherit;cursor:pointer}
 <body>
 <div class="proto-bar">
   <span class="tag">PROTOTYPE</span>
-  교과서 읽기 — <b>문단별 읽기 (학생 학습 화면)</b>
+  교과서 읽기 — <b>꼼꼼히 읽기 (학생 학습 화면)</b>
   <span>· 클릭으로 학습 흐름 체험 (더미 데이터)</span>
   <a href="index.html">← 관리자 등록 화면(ICMS)</a>
 </div>
@@ -177,7 +177,7 @@ button{font-family:inherit;cursor:pointer}
       </div>
     </section>
 
-    <!-- 문단별 읽기 -->
+    <!-- 꼼꼼히 읽기 -->
     <section id="v-read" class="view">
       <div class="chips-row" id="chips"></div>
       <div class="reader">
@@ -355,7 +355,7 @@ function gotoStage(stage){
   else if(stage==="result"){ showResult(); }
 }
 
-/* ===== 문단별 읽기 ===== */
+/* ===== 꼼꼼히 읽기 ===== */
 function renderChips(){
   const wrap=document.getElementById("chips");
   wrap.innerHTML='<span class="label">문단 이동</span>';
